@@ -84,7 +84,7 @@ export const HomePage: React.FC = () => {
       <div className="lg:col-span-2 flex flex-col">
         <TaskForm />
         
-        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
           {tasks.length === 0 ? (
             <div className="text-center py-12 border-2 border-dashed border-gray-100 rounded-2xl text-gray-400 text-sm">
               ✨ Sky looks clear! Time to set some fresh goals.

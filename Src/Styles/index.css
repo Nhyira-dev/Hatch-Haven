@@ -34,4 +34,17 @@
   .bg-hh-accent { background-color: var(--hh-accent); }
   .bg-hh-lavender { background-color: var(--hh-lavender); }
   .text-hh-text { color: var(--hh-text); }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-200 rounded-full hover:bg-gray-300;
+  }
 }

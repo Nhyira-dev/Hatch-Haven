@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { Task, Difficulty, Egg, EggType, Pet, ShopItem, InventoryItem, GrowthStage, Quest } from '../types';
 
 interface GameContextType {
@@ -20,6 +20,7 @@ interface GameContextType {
   buyShopItem: (item: ShopItem) => boolean;
   consumeItem: (itemId: string, statBoost: { hunger: number; happiness: number }) => void;
   claimQuestReward: (questId: string) => void;
+  resetGame: () => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -62,16 +63,39 @@ const PET_TEMPLATES: Record<EggType, { emoji: string; type: string }> = {
   Forest: { emoji: '🍄', type: 'Mushroom Spirit' },
 };
 
+const getStorageItem = <T,>(key: string, fallback: T): T => {
+  try {
+    if (typeof window === 'undefined') return fallback;
+    const data = localStorage.getItem(`hatch_haven_${key}`);
+    return data ? JSON.parse(data) : fallback;
+  } catch (e) {
+    console.error(`Error loading key "${key}" from localStorage`, e);
+    return fallback;
+  }
+};
+
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [coins, setCoins] = useState<number>(200);
-  const [gems, setGems] = useState<number>(0);
-  const [xp, setXp] = useState<number>(0);
-  const [activeEgg, setActiveEgg] = useState<Egg | null>(null);
-  const [activePet, setActivePet] = useState<Pet | null>(null);
-  const [inventory, setInventory] = useState<InventoryItem[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [quests, setQuests] = useState<Quest[]>(INITIAL_QUESTS);
-  const [totalCoinsEarned, setTotalCoinsEarned] = useState<number>(0);
+  const [coins, setCoins] = useState<number>(() => getStorageItem('coins', 150));
+  const [gems, setGems] = useState<number>(() => getStorageItem('gems', 0));
+  const [xp, setXp] = useState<number>(() => getStorageItem('xp', 0));
+  const [activeEgg, setActiveEgg] = useState<Egg | null>(() => getStorageItem('activeEgg', null));
+  const [activePet, setActivePet] = useState<Pet | null>(() => getStorageItem('activePet', null));
+  const [inventory, setInventory] = useState<InventoryItem[]>(() => getStorageItem('inventory', []));
+  const [tasks, setTasks] = useState<Task[]>(() => getStorageItem('tasks', []));
+  const [quests, setQuests] = useState<Quest[]>(() => getStorageItem('quests', INITIAL_QUESTS));
+  const [totalCoinsEarned, setTotalCoinsEarned] = useState<number>(() => getStorageItem('totalCoinsEarned', 0));
+
+  useEffect(() => {
+    localStorage.setItem('hatch_haven_coins', JSON.stringify(coins));
+    localStorage.setItem('hatch_haven_gems', JSON.stringify(gems));
+    localStorage.setItem('hatch_haven_xp', JSON.stringify(xp));
+    localStorage.setItem('hatch_haven_activeEgg', JSON.stringify(activeEgg));
+    localStorage.setItem('hatch_haven_activePet', JSON.stringify(activePet));
+    localStorage.setItem('hatch_haven_inventory', JSON.stringify(inventory));
+    localStorage.setItem('hatch_haven_tasks', JSON.stringify(tasks));
+    localStorage.setItem('hatch_haven_quests', JSON.stringify(quests));
+    localStorage.setItem('hatch_haven_totalCoinsEarned', JSON.stringify(totalCoinsEarned));
+  }, [coins, gems, xp, activeEgg, activePet, inventory, tasks, quests, totalCoinsEarned]);
 
   const updateQuestProgress = (type: 'tasks_completed' | 'coins_earned', amount: number) => {
     setQuests((prevQuests) =>
@@ -228,6 +252,24 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
   };
 
+  const resetGame = () => {
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith('hatch_haven_')) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    setCoins(150);
+    setGems(0);
+    setXp(0);
+    setActiveEgg(null);
+    setActivePet(null);
+    setInventory([]);
+    setTasks([]);
+    setQuests(INITIAL_QUESTS);
+    setTotalCoinsEarned(0);
+  };
+
   const hatchPet = (name: string) => {
     if (!activeEgg || !activeEgg.isHatched) return;
     const template = PET_TEMPLATES[activeEgg.type];
@@ -280,7 +322,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <GameContext.Provider value={{ coins, gems, xp, tasks, activeEgg, activePet, inventory, quests, addTask, completeTodo, trackHabit, deleteTask, purchaseEgg, hatchPet, interactWithPet, buyShopItem, consumeItem, claimQuestReward }}>
+    <GameContext.Provider value={{ coins, gems, xp, tasks, activeEgg, activePet, inventory, quests, addTask, completeTodo, trackHabit, deleteTask, purchaseEgg, hatchPet, interactWithPet, buyShopItem, consumeItem, claimQuestReward, resetGame }}>
       {children}
     </GameContext.Provider>
   );
