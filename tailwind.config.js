@@ -9,14 +9,14 @@ module.exports = {
     extend: {
       colors: {
         hh: {
-          bg: '#FFF8F2',
-          primary: '#A7D8C9',
-          accent: '#FFD6A5',
-          pink: '#F8C8DC',
-          lavender: '#D8C8F8',
-          text: '#5C5C5C',
-          success: '#A8E6A3',
-          warning: '#FFD166',
+          bg: '#FFF0F6',       // light pink background
+          primary: '#FF6FA6',  // vibrant pink primary
+          accent: '#FFB3D1',   // soft pink accent
+          pink: '#FF92C2',     // lively light pink
+          lavender: '#E9D5FF', // brighter lavender
+          text: '#3B1F2B',     // darker warm text for contrast
+          success: '#7AE7A3',  // slightly more vivid success
+          warning: '#FFC26A',  // warmer warning
         }
       },
       fontFamily: {

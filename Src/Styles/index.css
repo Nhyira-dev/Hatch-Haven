@@ -2,13 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Design tokens (CSS variables) for hh palette - keep in source */
+:root {
+  --hh-bg: #FFF0F6;
+  --hh-primary: #FF6FA6;
+  --hh-accent: #FFB3D1;
+  --hh-pink: #FF92C2;
+  --hh-lavender: #E9D5FF;
+  --hh-text: #3B1F2B;
+  --hh-success: #7AE7A3;
+  --hh-warning: #FFC26A;
+}
+
 @layer base {
   body {
     @apply bg-hh-bg text-hh-text font-sans antialiased selection:bg-hh-accent/30;
+    /* Ensure variables are applied as fallback for non-Tailwind consumers */
+    background-color: var(--hh-bg);
+    color: var(--hh-text);
   }
 
   /* Global Soft Rounded Style for Cozy Theme */
   .cozy-card {
     @apply bg-white rounded-3xl border border-orange-50/50 shadow-cozy transition-all duration-300 hover:shadow-floating;
   }
+}
+
+@layer components {
+  /* Provide utility fallbacks that reference CSS variables */
+  .bg-hh-primary { background-color: var(--hh-primary); }
+  .bg-hh-accent { background-color: var(--hh-accent); }
+  .bg-hh-lavender { background-color: var(--hh-lavender); }
+  .text-hh-text { color: var(--hh-text); }
 }
