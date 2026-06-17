@@ -49,7 +49,7 @@ export interface Quest {
   id: string;
   title: string;
   description: string;
-  targetType: 'tasks_completed' | 'coins_earned';
+  targetType: 'tasks_completed' | 'coins_earned' | 'pet_interactions' | 'items_used' | 'pets_hatched';
   targetValue: number;
   currentValue: number;
   gemReward: number;

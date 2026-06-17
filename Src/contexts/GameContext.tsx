@@ -53,6 +53,66 @@ const INITIAL_QUESTS: Quest[] = [
     gemReward: 5,
     isClaimed: false,
   },
+  {
+    id: 'q3',
+    title: 'Task Trailblazer',
+    description: 'Complete 6 tasks or habits to prove your dedication.',
+    targetType: 'tasks_completed',
+    targetValue: 6,
+    currentValue: 0,
+    gemReward: 4,
+    isClaimed: false,
+  },
+  {
+    id: 'q4',
+    title: 'Treasure Seeker',
+    description: 'Earn 500 coins to unlock a bigger prize.',
+    targetType: 'coins_earned',
+    targetValue: 500,
+    currentValue: 0,
+    gemReward: 8,
+    isClaimed: false,
+  },
+  {
+    id: 'q5',
+    title: 'Hatch Haven Hero',
+    description: 'Complete 8 tasks or habits and become a champion.',
+    targetType: 'tasks_completed',
+    targetValue: 8,
+    currentValue: 0,
+    gemReward: 7,
+    isClaimed: false,
+  },
+  {
+    id: 'q6',
+    title: 'Pet Playmate',
+    description: 'Interact with your pet 4 times to strengthen your bond.',
+    targetType: 'pet_interactions',
+    targetValue: 4,
+    currentValue: 0,
+    gemReward: 4,
+    isClaimed: false,
+  },
+  {
+    id: 'q7',
+    title: 'Snack Master',
+    description: 'Use 3 inventory items to keep your pet happy.',
+    targetType: 'items_used',
+    targetValue: 3,
+    currentValue: 0,
+    gemReward: 5,
+    isClaimed: false,
+  },
+  {
+    id: 'q8',
+    title: 'Egg Whisperer',
+    description: 'Hatch a pet to unlock legendary status.',
+    targetType: 'pets_hatched',
+    targetValue: 1,
+    currentValue: 0,
+    gemReward: 6,
+    isClaimed: false,
+  },
 ];
 
 const PET_TEMPLATES: Record<EggType, { emoji: string; type: string }> = {
@@ -97,19 +157,14 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     localStorage.setItem('hatch_haven_totalCoinsEarned', JSON.stringify(totalCoinsEarned));
   }, [coins, gems, xp, activeEgg, activePet, inventory, tasks, quests, totalCoinsEarned]);
 
-  const updateQuestProgress = (type: 'tasks_completed' | 'coins_earned', amount: number) => {
+  const updateQuestProgress = (type: Quest['targetType'], amount: number) => {
     setQuests((prevQuests) =>
       prevQuests.map((quest) => {
         if (quest.targetType !== type || quest.isClaimed) return quest;
 
-        const nextValue =
-          type === 'tasks_completed'
-            ? quest.currentValue + amount
-            : quest.currentValue + amount;
-
         return {
           ...quest,
-          currentValue: Math.min(nextValue, quest.targetValue),
+          currentValue: Math.min(quest.currentValue + amount, quest.targetValue),
         };
       })
     );
@@ -238,6 +293,8 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         stage: nextStage,
       };
     });
+
+    updateQuestProgress('items_used', 1);
   };
 
   const claimQuestReward = (questId: string) => {
@@ -285,6 +342,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       level: 1,
     });
     setActiveEgg(null);
+    updateQuestProgress('pets_hatched', 1);
   };
 
   const interactWithPet = (action: 'feed' | 'play') => {
@@ -319,6 +377,8 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         stage: nextStage,
       };
     });
+
+    updateQuestProgress('pet_interactions', 1);
   };
 
   return (
