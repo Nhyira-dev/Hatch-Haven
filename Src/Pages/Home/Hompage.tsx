@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGame } from '../../contexts/GameContext';
-import { TaskForm } from '../../components/Task/TaskForm';
-import { TaskCard } from '../../components/Task/TaskCard';
+import { TaskForm } from '../../Components/Task/TaskForm';
+import { TaskCard } from '../../Components/Task/TaskCard';
 
 export const HomePage: React.FC = () => {
   const { tasks } = useGame();
