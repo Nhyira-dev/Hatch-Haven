@@ -13,9 +13,28 @@ export const EggIncubator: React.FC = () => {
   else if (progressPercentage > 75) crackGraphic = '⚡🐣⚡';
   else if (progressPercentage > 40) crackGraphic = '🥚💥';
 
+  const gradientMap: Record<string, string> = {
+    Nature: 'from-green-200 to-green-400',
+    Dragon: 'from-orange-200 to-orange-400',
+    Ocean: 'from-blue-200 to-blue-400',
+    Galaxy: 'from-purple-200 to-purple-400',
+    Forest: 'from-pink-200 to-pink-400',
+  };
+
+  const progressColorMap: Record<string, string> = {
+    Nature: 'bg-green-400',
+    Dragon: 'bg-orange-400',
+    Ocean: 'bg-blue-400',
+    Galaxy: 'bg-purple-400',
+    Forest: 'bg-pink-400',
+  };
+
+  const gradientClass = gradientMap[activeEgg.type] || 'from-gray-100 to-gray-200';
+  const progressColorClass = progressColorMap[activeEgg.type] || 'bg-hh-accent';
+
   return (
     <div className="flex flex-col items-center justify-center p-6 text-center w-full">
-      <div className={`text-7xl mb-6 select-none ${!activeEgg.isHatched ? 'animate-bounce' : ''}`}>
+      <div className={`w-40 h-40 mb-6 rounded-3xl flex items-center justify-center text-7xl select-none shadow-inner bg-gradient-to-br ${gradientClass} ${!activeEgg.isHatched ? 'animate-bounce' : ''}`}>
         {crackGraphic}
       </div>
 
@@ -31,7 +50,7 @@ export const EggIncubator: React.FC = () => {
 
         <div className="w-full bg-gray-100 h-3 rounded-full overflow-hidden p-0.5 border border-gray-200/50">
           <div 
-            className="bg-hh-accent h-full rounded-full transition-all duration-300"
+            className={`${progressColorClass} h-full rounded-full transition-all duration-300`}
             style={{ width: `${progressPercentage}%` }}
           ></div>
         </div>
