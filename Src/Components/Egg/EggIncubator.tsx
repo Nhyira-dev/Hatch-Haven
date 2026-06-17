@@ -32,11 +32,25 @@ export const EggIncubator: React.FC = () => {
   const gradientClass = gradientMap[activeEgg.type] || 'from-gray-100 to-gray-200';
   const progressColorClass = progressColorMap[activeEgg.type] || 'bg-hh-accent';
 
+  const progressGlowColor: Record<string, string> = {
+    Nature: 'rgba(34,197,94,0.45)',
+    Dragon: 'rgba(249,115,22,0.55)',
+    Ocean: 'rgba(59,130,246,0.55)',
+    Galaxy: 'rgba(139,92,246,0.55)',
+    Forest: 'rgba(236,72,153,0.55)',
+  };
+
+  const glowShadow = activeEgg.isHatched
+    ? '0 0 36px rgba(255,255,255,0.75)'
+    : progressPercentage > 75
+    ? `0 0 24px ${progressGlowColor[activeEgg.type] || 'rgba(255,255,255,0.45)'}`
+    : 'none';
+
   return (
     <div className="flex flex-col items-center justify-center p-6 text-center w-full">
       <div
-        className={`w-36 h-44 mb-6 flex items-center justify-center text-7xl select-none shadow-2xl bg-gradient-to-br ${gradientClass} ${!activeEgg.isHatched ? 'animate-bounce' : ''}`}
-        style={{ borderRadius: '50% 50% 45% 45%' }}
+        className={`w-36 h-44 mb-6 flex items-center justify-center text-7xl select-none bg-gradient-to-br ${gradientClass} ${!activeEgg.isHatched ? 'animate-bounce' : ''}`}
+        style={{ borderRadius: '50% 50% 45% 45%', boxShadow: glowShadow }}
       >
         {crackGraphic}
       </div>
