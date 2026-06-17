@@ -30,7 +30,7 @@ export const EggSelector: React.FC = () => {
             key={egg.type}
             disabled={coins < 50}
             onClick={() => purchaseEgg(egg.type, egg.emoji)}
-            className={`p-3 rounded-2xl flex flex-col items-center gap-1 border border-orange-50/50 hover:scale-102 transition-all ${egg.bg} disabled:opacity-40 disabled:hover:scale-100`}
+            className={`p-3 rounded-2xl flex flex-col items-center gap-1 border border-orange-50/50 hover:scale-102 hover:shadow-xl hover:ring-2 hover:ring-white/30 transition-all ${egg.bg} disabled:opacity-40 disabled:hover:scale-100`}
           >
             <span className="text-3xl animate-pulse">{egg.emoji}</span>
             <span className="text-xs font-bold text-hh-text">{egg.type}</span>
