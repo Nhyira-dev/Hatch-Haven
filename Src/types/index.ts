@@ -17,6 +17,19 @@ export interface GameState {
   tasks: Task[];
 }
 
+export type GrowthStage = 'Baby' | 'Juvenile' | 'Adult';
+
+export interface Pet {
+  id: string;
+  name: string;
+  type: string;
+  emoji: string;
+  stage: GrowthStage;
+  hunger: number;
+  happiness: number;
+  level: number;
+}
+
 export type EggType = 'Nature' | 'Dragon' | 'Ocean' | 'Galaxy' | 'Forest';
 
 export interface Egg {

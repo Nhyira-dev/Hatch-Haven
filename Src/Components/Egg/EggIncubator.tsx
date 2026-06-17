@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useGame } from '../../contexts/GameContext';
 
 export const EggIncubator: React.FC = () => {
-  const { activeEgg } = useGame();
+  const { activeEgg, hatchPet } = useGame();
+  const [petName, setPetName] = useState('');
 
   if (!activeEgg) return null;
 
@@ -56,27 +57,45 @@ export const EggIncubator: React.FC = () => {
       </div>
 
       <div className="w-full max-w-xs">
-        <div className="flex justify-between items-center mb-1">
-          <span className="text-xs font-bold text-hh-text tracking-wide uppercase">
-            {activeEgg.type} Egg
-          </span>
-          <span className="text-xs font-mono font-semibold text-gray-500">
-            {activeEgg.xpProgress}/{activeEgg.xpRequired} XP
-          </span>
-        </div>
-
-        <div className="w-full bg-gray-100 h-3 rounded-full overflow-hidden p-0.5 border border-gray-200/50">
-          <div 
-            className={`${progressColorClass} h-full rounded-full transition-all duration-300`}
-            style={{ width: `${progressPercentage}%` }}
-          ></div>
-        </div>
-
-        <p className="text-[11px] text-gray-400 mt-3 leading-relaxed">
-          {activeEgg.isHatched 
-            ? "Ready to hatch! Let's initialize the Pet Engine in Module 4." 
-            : "Keep going! Tasks feed energy directly to the egg envelope."}
-        </p>
+        {!activeEgg.isHatched ? (
+          <>
+            <div className="flex justify-between items-center mb-1">
+              <span className="text-xs font-bold text-hh-text tracking-wide uppercase">
+                {activeEgg.type} Egg
+              </span>
+              <span className="text-xs font-mono font-semibold text-gray-500">
+                {activeEgg.xpProgress}/{activeEgg.xpRequired} XP
+              </span>
+            </div>
+            <div className="w-full bg-gray-100 h-3 rounded-full overflow-hidden p-0.5 border border-gray-200/50">
+              <div 
+                className={`${progressColorClass} h-full rounded-full transition-all duration-300`}
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
+            </div>
+            <p className="text-[11px] text-gray-400 mt-3">
+              Keep completing items to crack the shell membrane!
+            </p>
+          </>
+        ) : (
+          <div className="space-y-3 animation-fade-in">
+            <h4 className="font-bold text-hh-text text-sm">Your egg is ready to hatch!</h4>
+            <input
+              type="text"
+              placeholder="Name your companion..."
+              maxLength={14}
+              value={petName}
+              onChange={(e) => setPetName(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-200 rounded-xl bg-hh-bg text-xs text-center focus:outline-none focus:ring-2 focus:ring-hh-primary"
+            />
+            <button
+              onClick={() => hatchPet(petName)}
+              className="w-full py-2 bg-hh-primary text-white font-bold text-xs rounded-xl shadow-sm hover:brightness-105 active:scale-98 transition-all"
+            >
+              Hatch Companion! 🎉
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

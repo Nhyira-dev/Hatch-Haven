@@ -4,15 +4,16 @@ import { TaskForm } from '../../Components/Task/TaskForm';
 import { TaskCard } from '../../Components/Task/TaskCard';
 import { EggSelector } from '../../Components/Egg/EggSelector';
 import { EggIncubator } from '../../Components/Egg/EggIncubator';
+import { PetDisplay } from '../../Components/Pet/PetDisplay';
 
 export const HomePage: React.FC = () => {
-  const { tasks, activeEgg } = useGame();
+  const { tasks, activeEgg, activePet } = useGame();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
       {/* Egg focal container unchanged */}
       <div className="lg:col-span-1 cozy-card p-6 flex flex-col items-center justify-center min-h-[350px] lg:min-h-[450px] bg-gradient-to-b from-white to-orange-50/20">
-        {activeEgg ? <EggIncubator /> : <EggSelector />}
+        {activePet ? <PetDisplay /> : activeEgg ? <EggIncubator /> : <EggSelector />}
       </div>
 
       {/* Live Task Workspace */}
