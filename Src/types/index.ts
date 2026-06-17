@@ -16,3 +16,14 @@ export interface GameState {
   xp: number;
   tasks: Task[];
 }
+
+export type EggType = 'Nature' | 'Dragon' | 'Ocean' | 'Galaxy' | 'Forest';
+
+export interface Egg {
+  id: string;
+  type: EggType;
+  emoji: string;
+  xpProgress: number;
+  xpRequired: number;
+  isHatched: boolean;
+}

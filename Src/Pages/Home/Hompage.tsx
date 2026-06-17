@@ -2,19 +2,17 @@ import React from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { TaskForm } from '../../Components/Task/TaskForm';
 import { TaskCard } from '../../Components/Task/TaskCard';
+import { EggSelector } from '../../Components/Egg/EggSelector';
+import { EggIncubator } from '../../Components/Egg/EggIncubator';
 
 export const HomePage: React.FC = () => {
-  const { tasks } = useGame();
+  const { tasks, activeEgg } = useGame();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
       {/* Egg focal container unchanged */}
-      <div className="lg:col-span-1 cozy-card p-8 flex flex-col items-center justify-center min-h-[300px] lg:min-h-[450px] bg-gradient-to-b from-white to-orange-50/20">
-        <div className="text-6xl animate-bounce mb-4">🥚</div>
-        <h2 className="text-2xl font-bold text-hh-text mb-2">Hatchery Sandbox</h2>
-        <p className="text-sm text-gray-400 text-center max-w-xs">
-          Earn gold and experience by completing tasks. We hatch your first ecosystem egg in Module 3!
-        </p>
+      <div className="lg:col-span-1 cozy-card p-6 flex flex-col items-center justify-center min-h-[350px] lg:min-h-[450px] bg-gradient-to-b from-white to-orange-50/20">
+        {activeEgg ? <EggIncubator /> : <EggSelector />}
       </div>
 
       {/* Live Task Workspace */}
