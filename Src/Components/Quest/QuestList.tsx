@@ -4,11 +4,28 @@ import { useGame } from '../../contexts/GameContext';
 export const QuestList: React.FC = () => {
   const { quests, claimQuestReward } = useGame();
 
+  const getProgressLabel = (quest: typeof quests[number]) => {
+    switch (quest.targetType) {
+      case 'coins_earned':
+        return `${quest.currentValue} / ${quest.targetValue} coins earned`;
+      case 'tasks_completed':
+        return `${quest.currentValue} / ${quest.targetValue} tasks completed`;
+      case 'pet_interactions':
+        return `${quest.currentValue} / ${quest.targetValue} pet interactions`;
+      case 'items_used':
+        return `${quest.currentValue} / ${quest.targetValue} items used`;
+      case 'pets_hatched':
+        return `${quest.currentValue} / ${quest.targetValue} pets hatched`;
+      default:
+        return `${quest.currentValue} / ${quest.targetValue}`;
+    }
+  };
+
   return (
     <div className="w-full p-2">
       <div className="mb-4 text-center">
         <h3 className="font-extrabold text-lg text-hh-text">Epic Journey</h3>
-        <p className="text-xs text-gray-400">Claim rare gems by reaching long-term goals.</p>
+        <p className="text-xs text-gray-400">Claim rare gems by reaching long-term goals. Item use and pet care quests are tracked automatically.</p>
       </div>
 
       <div className="space-y-3 max-h-[340px] overflow-y-auto pr-1">
@@ -44,7 +61,7 @@ export const QuestList: React.FC = () => {
                   ></div>
                 </div>
                 <span className="text-[10px] font-mono font-bold text-gray-500 whitespace-nowrap">
-                  {quest.currentValue} / {quest.targetValue}
+                  {getProgressLabel(quest)}
                 </span>
               </div>
 
