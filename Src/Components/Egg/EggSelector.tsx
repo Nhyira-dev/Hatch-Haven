@@ -9,11 +9,11 @@ interface EggOption {
 }
 
 const EGG_OPTIONS: EggOption[] = [
-  { type: 'Nature', emoji: '🌿', bg: 'bg-hh-primary/20' },
-  { type: 'Dragon', emoji: '🔥', bg: 'bg-hh-accent/20' },
-  { type: 'Ocean', emoji: '🌊', bg: 'bg-blue-100' },
-  { type: 'Galaxy', emoji: '🌌', bg: 'bg-hh-lavender/20' },
-  { type: 'Forest', emoji: '🍄', bg: 'bg-hh-pink/20' },
+  { type: 'Nature', emoji: '🌿', bg: 'bg-gradient-to-br from-green-200 to-green-400' },
+  { type: 'Dragon', emoji: '🔥', bg: 'bg-gradient-to-br from-orange-200 to-orange-400' },
+  { type: 'Ocean', emoji: '🌊', bg: 'bg-gradient-to-br from-blue-200 to-blue-400' },
+  { type: 'Galaxy', emoji: '🌌', bg: 'bg-gradient-to-br from-purple-200 to-purple-400' },
+  { type: 'Forest', emoji: '🍄', bg: 'bg-gradient-to-br from-pink-200 to-pink-400' },
 ];
 
 export const EggSelector: React.FC = () => {
