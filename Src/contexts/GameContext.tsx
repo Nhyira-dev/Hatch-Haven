@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Task, Difficulty, Egg, EggType, Pet, GrowthStage } from '../types';
+import { Task, Difficulty, Egg, EggType, Pet, ShopItem, InventoryItem, GrowthStage } from '../types';
 
 interface GameContextType {
   coins: number;
@@ -8,6 +8,7 @@ interface GameContextType {
   tasks: Task[];
   activeEgg: Egg | null;
   activePet: Pet | null;
+  inventory: InventoryItem[];
   addTask: (title: string, type: 'habit' | 'todo', difficulty: Difficulty) => void;
   completeTodo: (id: string) => void;
   trackHabit: (id: string) => void;
@@ -15,6 +16,7 @@ interface GameContextType {
   purchaseEgg: (type: EggType, emoji: string) => void;
   hatchPet: (name: string) => void;
   interactWithPet: (action: 'feed' | 'play') => void;
+  buyShopItem: (item: ShopItem) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -35,11 +37,12 @@ const PET_TEMPLATES: Record<EggType, { emoji: string; type: string }> = {
 };
 
 export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [coins, setCoins] = useState<number>(150);
+  const [coins, setCoins] = useState<number>(200);
   const [gems, setGems] = useState<number>(0);
   const [xp, setXp] = useState<number>(0);
   const [activeEgg, setActiveEgg] = useState<Egg | null>(null);
   const [activePet, setActivePet] = useState<Pet | null>(null);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const addTask = (title: string, type: 'habit' | 'todo', difficulty: Difficulty) => {
@@ -111,6 +114,20 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   };
 
+  const buyShopItem = (item: ShopItem) => {
+    if (coins < item.cost) return;
+    setCoins((prev) => prev - item.cost);
+    setInventory((prev) => {
+      const existing = prev.find((entry) => entry.itemId === item.id);
+      if (existing) {
+        return prev.map((entry) =>
+          entry.itemId === item.id ? { ...entry, quantity: entry.quantity + 1 } : entry
+        );
+      }
+      return [...prev, { itemId: item.id, quantity: 1 }];
+    });
+  };
+
   const hatchPet = (name: string) => {
     if (!activeEgg || !activeEgg.isHatched) return;
     const template = PET_TEMPLATES[activeEgg.type];
@@ -162,7 +179,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <GameContext.Provider value={{ coins, gems, xp, tasks, activeEgg, activePet, addTask, completeTodo, trackHabit, deleteTask, purchaseEgg, hatchPet, interactWithPet }}>
+    <GameContext.Provider value={{ coins, gems, xp, tasks, activeEgg, activePet, inventory, addTask, completeTodo, trackHabit, deleteTask, purchaseEgg, hatchPet, interactWithPet, buyShopItem }}>
       {children}
     </GameContext.Provider>
   );

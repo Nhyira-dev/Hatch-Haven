@@ -30,6 +30,21 @@ export interface Pet {
   level: number;
 }
 
+export interface ShopItem {
+  id: string;
+  name: string;
+  emoji: string;
+  cost: number;
+  description: string;
+  category: 'food' | 'rare_food';
+  statBoost: { hunger: number; happiness: number };
+}
+
+export interface InventoryItem {
+  itemId: string;
+  quantity: number;
+}
+
 export type EggType = 'Nature' | 'Dragon' | 'Ocean' | 'Galaxy' | 'Forest';
 
 export interface Egg {

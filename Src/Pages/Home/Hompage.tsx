@@ -1,19 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { TaskForm } from '../../Components/Task/TaskForm';
 import { TaskCard } from '../../Components/Task/TaskCard';
 import { EggSelector } from '../../Components/Egg/EggSelector';
 import { EggIncubator } from '../../Components/Egg/EggIncubator';
 import { PetDisplay } from '../../Components/Pet/PetDisplay';
+import { ShopCatalog } from '../../Components/Shop/ShopCatalog';
 
 export const HomePage: React.FC = () => {
   const { tasks, activeEgg, activePet } = useGame();
+  const [activeTab, setActiveTab] = useState<'haven' | 'shop'>('haven');
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
       {/* Egg focal container unchanged */}
-      <div className="lg:col-span-1 cozy-card p-6 flex flex-col items-center justify-center min-h-[350px] lg:min-h-[450px] bg-gradient-to-b from-white to-orange-50/20">
-        {activePet ? <PetDisplay /> : activeEgg ? <EggIncubator /> : <EggSelector />}
+      <div className="lg:col-span-1 flex flex-col gap-4">
+        <div className="bg-white p-1.5 rounded-2xl border border-orange-50/50 shadow-sm flex gap-1">
+          <button
+            onClick={() => setActiveTab('haven')}
+            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+              activeTab === 'haven' ? 'bg-hh-primary text-white shadow-sm' : 'text-hh-text hover:bg-gray-50'
+            }`}
+          >
+            🏡 My Haven
+          </button>
+          <button
+            onClick={() => setActiveTab('shop')}
+            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+              activeTab === 'shop' ? 'bg-hh-primary text-white shadow-sm' : 'text-hh-text hover:bg-gray-50'
+            }`}
+          >
+            🛒 Shop Market
+          </button>
+        </div>
+
+        <div className="cozy-card p-5 flex flex-col items-center justify-center min-h-[380px] lg:min-h-[400px] bg-gradient-to-b from-white to-orange-50/20 w-full">
+          {activeTab === 'shop' ? (
+            <ShopCatalog />
+          ) : activePet ? (
+            <PetDisplay />
+          ) : activeEgg ? (
+            <EggIncubator />
+          ) : (
+            <EggSelector />
+          )}
+        </div>
       </div>
 
       {/* Live Task Workspace */}
