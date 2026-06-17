@@ -3,7 +3,7 @@ import { useGame } from '../../contexts/GameContext';
 import { SHOP_ITEMS } from '../Shop/shopData';
 
 export const PetDisplay: React.FC = () => {
-  const { activePet, interactWithPet, inventory, consumeInventoryItem } = useGame();
+  const { activePet, interactWithPet, inventory, consumeItem } = useGame();
 
   if (!activePet) return null;
 
@@ -79,7 +79,7 @@ export const PetDisplay: React.FC = () => {
                 </div>
               </div>
               <button
-                onClick={() => item && consumeInventoryItem(item)}
+                onClick={() => item && consumeItem(item.id, item.statBoost)}
                 className="px-3 py-2 bg-hh-primary text-white rounded-xl text-[10px] font-bold transition-all hover:brightness-105 disabled:opacity-50"
               >
                 Use

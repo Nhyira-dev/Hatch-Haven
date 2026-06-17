@@ -17,7 +17,7 @@ interface GameContextType {
   hatchPet: (name: string) => void;
   interactWithPet: (action: 'feed' | 'play') => void;
   buyShopItem: (item: ShopItem) => boolean;
-  consumeInventoryItem: (item: ShopItem) => void;
+  consumeItem: (itemId: string, statBoost: { hunger: number; happiness: number }) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -130,21 +130,21 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return true;
   };
 
-  const consumeInventoryItem = (item: ShopItem) => {
+  const consumeItem = (itemId: string, statBoost: { hunger: number; happiness: number }) => {
     if (!activePet) return;
 
     setInventory((prev) =>
       prev
         .map((entry) =>
-          entry.itemId === item.id ? { ...entry, quantity: Math.max(entry.quantity - 1, 0) } : entry
+          entry.itemId === itemId ? { ...entry, quantity: Math.max(entry.quantity - 1, 0) } : entry
         )
         .filter((entry) => entry.quantity > 0)
     );
 
     setActivePet((prev) => {
       if (!prev) return null;
-      const nextHunger = Math.min(prev.hunger + item.statBoost.hunger, 100);
-      const nextHappiness = Math.min(prev.happiness + item.statBoost.happiness, 100);
+      const nextHunger = Math.min(prev.hunger + statBoost.hunger, 100);
+      const nextHappiness = Math.min(prev.happiness + statBoost.happiness, 100);
       let nextLevel = prev.level;
       if (nextHappiness === 100 && nextHunger >= 80 && prev.level < 3) {
         nextLevel += 1;
@@ -214,7 +214,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <GameContext.Provider value={{ coins, gems, xp, tasks, activeEgg, activePet, inventory, addTask, completeTodo, trackHabit, deleteTask, purchaseEgg, hatchPet, interactWithPet, buyShopItem, consumeInventoryItem }}>
+    <GameContext.Provider value={{ coins, gems, xp, tasks, activeEgg, activePet, inventory, addTask, completeTodo, trackHabit, deleteTask, purchaseEgg, hatchPet, interactWithPet, buyShopItem, consumeItem }}>
       {children}
     </GameContext.Provider>
   );
