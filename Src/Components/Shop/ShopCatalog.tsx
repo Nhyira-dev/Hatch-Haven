@@ -1,48 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { ShopItem } from '../../types';
-
-export const SHOP_ITEMS: ShopItem[] = [
-  {
-    id: 'f1',
-    name: 'Crunchy Apple',
-    emoji: '🍎',
-    cost: 15,
-    description: 'A crisp orchard treat.',
-    category: 'food',
-    statBoost: { hunger: 20, happiness: 5 },
-  },
-  {
-    id: 'f2',
-    name: 'Sweet Carrot',
-    emoji: '🥕',
-    cost: 12,
-    description: 'Freshly harvested soil treat.',
-    category: 'food',
-    statBoost: { hunger: 15, happiness: 5 },
-  },
-  {
-    id: 'r1',
-    name: 'Rainbow Berry',
-    emoji: '🍓',
-    cost: 45,
-    description: 'Bursting with magical energy.',
-    category: 'rare_food',
-    statBoost: { hunger: 40, happiness: 30 },
-  },
-  {
-    id: 'r2',
-    name: 'Moon Cookie',
-    emoji: '🥮',
-    cost: 60,
-    description: 'Baked with cosmic stardust.',
-    category: 'rare_food',
-    statBoost: { hunger: 30, happiness: 50 },
-  },
-];
+import { SHOP_ITEMS } from './shopData';
 
 export const ShopCatalog: React.FC = () => {
   const { coins, buyShopItem, inventory } = useGame();
+  const [shopMessage, setShopMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+  const [flashItemId, setFlashItemId] = useState<string | null>(null);
 
   const getItemQuantity = (itemId: string) => {
     return inventory.find((item) => item.itemId === itemId)?.quantity || 0;
@@ -63,7 +27,7 @@ export const ShopCatalog: React.FC = () => {
           return (
             <div
               key={item.id}
-              className="p-3 bg-white border border-orange-50 rounded-2xl flex items-center justify-between shadow-sm"
+              className={`p-3 bg-white border border-orange-50 rounded-2xl flex items-center justify-between shadow-sm ${flashItemId === item.id ? 'animate-shop-flash border-hh-primary' : ''}`}
             >
               <div className="flex items-center gap-3">
                 <span className="text-3xl p-2 bg-hh-bg rounded-xl border border-orange-50/50">
@@ -84,7 +48,18 @@ export const ShopCatalog: React.FC = () => {
 
               <button
                 disabled={!canAfford}
-                onClick={() => buyShopItem(item)}
+                onClick={() => {
+                  const success = buyShopItem(item);
+                  setShopMessage(
+                    success
+                      ? { text: `Bought ${item.name}!`, type: 'success' }
+                      : { text: `Not enough coins for ${item.name}.`, type: 'error' }
+                  );
+                  if (success) {
+                    setFlashItemId(item.id);
+                    window.setTimeout(() => setFlashItemId(null), 300);
+                  }
+                }}
                 className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1 border ${
                   canAfford
                     ? 'bg-hh-accent/20 border-hh-accent text-orange-800 active:scale-95'
@@ -98,6 +73,15 @@ export const ShopCatalog: React.FC = () => {
           );
         })}
       </div>
+      {shopMessage && (
+        <div
+          className={`mt-4 rounded-2xl px-4 py-3 text-sm font-semibold ${
+            shopMessage.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
+          }`}
+        >
+          {shopMessage.text}
+        </div>
+      )}
     </div>
   );
 };

@@ -16,7 +16,8 @@ interface GameContextType {
   purchaseEgg: (type: EggType, emoji: string) => void;
   hatchPet: (name: string) => void;
   interactWithPet: (action: 'feed' | 'play') => void;
-  buyShopItem: (item: ShopItem) => void;
+  buyShopItem: (item: ShopItem) => boolean;
+  consumeInventoryItem: (item: ShopItem) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -115,7 +116,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const buyShopItem = (item: ShopItem) => {
-    if (coins < item.cost) return;
+    if (coins < item.cost) return false;
     setCoins((prev) => prev - item.cost);
     setInventory((prev) => {
       const existing = prev.find((entry) => entry.itemId === item.id);
@@ -125,6 +126,39 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         );
       }
       return [...prev, { itemId: item.id, quantity: 1 }];
+    });
+    return true;
+  };
+
+  const consumeInventoryItem = (item: ShopItem) => {
+    if (!activePet) return;
+
+    setInventory((prev) =>
+      prev
+        .map((entry) =>
+          entry.itemId === item.id ? { ...entry, quantity: Math.max(entry.quantity - 1, 0) } : entry
+        )
+        .filter((entry) => entry.quantity > 0)
+    );
+
+    setActivePet((prev) => {
+      if (!prev) return null;
+      const nextHunger = Math.min(prev.hunger + item.statBoost.hunger, 100);
+      const nextHappiness = Math.min(prev.happiness + item.statBoost.happiness, 100);
+      let nextLevel = prev.level;
+      if (nextHappiness === 100 && nextHunger >= 80 && prev.level < 3) {
+        nextLevel += 1;
+      }
+      let nextStage: GrowthStage = prev.stage;
+      if (nextLevel === 2) nextStage = 'Juvenile';
+      if (nextLevel >= 3) nextStage = 'Adult';
+      return {
+        ...prev,
+        hunger: nextHunger,
+        happiness: nextHappiness,
+        level: nextLevel,
+        stage: nextStage,
+      };
     });
   };
 
@@ -156,12 +190,13 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       let nextLevel = prev.level;
 
       if (action === 'feed') {
-        nextHunger = Math.min(prev.hunger + 25, 100);
+        nextHunger = Math.min(prev.hunger + 15, 100);
       } else if (action === 'play') {
-        nextHappiness = Math.min(prev.happiness + 20, 100);
-        if (nextHappiness === 100 && nextHunger > 80 && prev.level < 3) {
-          nextLevel += 1;
-        }
+        nextHappiness = Math.min(prev.happiness + 15, 100);
+      }
+
+      if (nextHappiness === 100 && nextHunger >= 80 && prev.level < 3) {
+        nextLevel += 1;
       }
 
       let nextStage: GrowthStage = prev.stage;
@@ -179,7 +214,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <GameContext.Provider value={{ coins, gems, xp, tasks, activeEgg, activePet, inventory, addTask, completeTodo, trackHabit, deleteTask, purchaseEgg, hatchPet, interactWithPet, buyShopItem }}>
+    <GameContext.Provider value={{ coins, gems, xp, tasks, activeEgg, activePet, inventory, addTask, completeTodo, trackHabit, deleteTask, purchaseEgg, hatchPet, interactWithPet, buyShopItem, consumeInventoryItem }}>
       {children}
     </GameContext.Provider>
   );

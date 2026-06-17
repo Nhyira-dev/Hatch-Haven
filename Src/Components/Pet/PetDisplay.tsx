@@ -1,10 +1,18 @@
 import React from 'react';
 import { useGame } from '../../contexts/GameContext';
+import { SHOP_ITEMS } from '../Shop/shopData';
 
 export const PetDisplay: React.FC = () => {
-  const { activePet, interactWithPet } = useGame();
+  const { activePet, interactWithPet, inventory, consumeInventoryItem } = useGame();
 
   if (!activePet) return null;
+
+  const ownedItems = inventory
+    .map((entry) => ({
+      item: SHOP_ITEMS.find((shopItem) => shopItem.id === entry.itemId),
+      quantity: entry.quantity,
+    }))
+    .filter((entry) => entry.item && entry.quantity > 0);
 
   return (
     <div className="flex flex-col items-center justify-center p-4 text-center w-full">
@@ -41,7 +49,7 @@ export const PetDisplay: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex gap-3 w-full max-w-xs">
+      <div className="flex gap-3 w-full max-w-xs mb-4">
         <button
           onClick={() => interactWithPet('feed')}
           className="flex-1 py-2 bg-hh-accent/20 border border-hh-accent text-orange-800 text-xs font-bold rounded-xl active:scale-95 transition-all"
@@ -54,6 +62,31 @@ export const PetDisplay: React.FC = () => {
         >
           Play Game
         </button>
+      </div>
+
+      <div className="w-full max-w-xs space-y-3">
+        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Inventory</div>
+        {ownedItems.length === 0 ? (
+          <div className="text-[11px] text-gray-400">No treats in inventory yet. Buy some from the shop to restore your companion.</div>
+        ) : (
+          ownedItems.map(({ item, quantity }) => (
+            <div key={item?.id} className="flex items-center justify-between gap-3 p-3 bg-white border border-orange-50 rounded-2xl">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{item?.emoji}</span>
+                <div>
+                  <p className="text-sm font-bold text-hh-text">{item?.name}</p>
+                  <p className="text-[10px] text-gray-400">Qty: {quantity}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => item && consumeInventoryItem(item)}
+                className="px-3 py-2 bg-hh-primary text-white rounded-xl text-[10px] font-bold transition-all hover:brightness-105 disabled:opacity-50"
+              >
+                Use
+              </button>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
