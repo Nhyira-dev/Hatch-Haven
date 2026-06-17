@@ -21,6 +21,23 @@ export const QuestList: React.FC = () => {
     }
   };
 
+  const getQuestIcon = (type: typeof quests[number]['targetType']) => {
+    switch (type) {
+      case 'coins_earned':
+        return '🪙';
+      case 'tasks_completed':
+        return '✅';
+      case 'pet_interactions':
+        return '🎾';
+      case 'items_used':
+        return '🍪';
+      case 'pets_hatched':
+        return '🥚';
+      default:
+        return '✨';
+    }
+  };
+
   return (
     <div className="w-full p-2">
       <div className="mb-4 text-center">
@@ -40,12 +57,15 @@ export const QuestList: React.FC = () => {
                 quest.isClaimed ? 'bg-gray-50/50 border-gray-100 opacity-60' : 'bg-white border-orange-50/60 shadow-sm'
               }`}
             >
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h4 className={`text-xs font-bold ${quest.isClaimed ? 'line-through text-gray-400' : 'text-hh-text'}`}>
-                    {quest.title}
-                  </h4>
-                  <p className="text-[10px] text-gray-400 mt-0.5">{quest.description}</p>
+              <div className="flex justify-between items-start mb-2 gap-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">{getQuestIcon(quest.targetType)}</span>
+                  <div>
+                    <h4 className={`text-xs font-bold ${quest.isClaimed ? 'line-through text-gray-400' : 'text-hh-text'}`}>
+                      {quest.title}
+                    </h4>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{quest.description}</p>
+                  </div>
                 </div>
 
                 <span className="text-[11px] font-bold text-hh-lavender flex items-center gap-0.5 bg-hh-lavender/10 px-2 py-0.5 rounded-full border border-hh-lavender/20">
