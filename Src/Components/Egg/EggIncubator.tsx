@@ -34,7 +34,10 @@ export const EggIncubator: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center p-6 text-center w-full">
-      <div className={`w-40 h-40 mb-6 rounded-3xl flex items-center justify-center text-7xl select-none shadow-inner bg-gradient-to-br ${gradientClass} ${!activeEgg.isHatched ? 'animate-bounce' : ''}`}>
+      <div
+        className={`w-36 h-44 mb-6 flex items-center justify-center text-7xl select-none shadow-2xl bg-gradient-to-br ${gradientClass} ${!activeEgg.isHatched ? 'animate-bounce' : ''}`}
+        style={{ borderRadius: '50% 50% 45% 45%' }}
+      >
         {crackGraphic}
       </div>
 
