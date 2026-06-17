@@ -45,6 +45,17 @@ export interface InventoryItem {
   quantity: number;
 }
 
+export interface Quest {
+  id: string;
+  title: string;
+  description: string;
+  targetType: 'tasks_completed' | 'coins_earned';
+  targetValue: number;
+  currentValue: number;
+  gemReward: number;
+  isClaimed: boolean;
+}
+
 export type EggType = 'Nature' | 'Dragon' | 'Ocean' | 'Galaxy' | 'Forest';
 
 export interface Egg {

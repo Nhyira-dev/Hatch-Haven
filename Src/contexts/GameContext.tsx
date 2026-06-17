@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Task, Difficulty, Egg, EggType, Pet, ShopItem, InventoryItem, GrowthStage } from '../types';
+import { Task, Difficulty, Egg, EggType, Pet, ShopItem, InventoryItem, GrowthStage, Quest } from '../types';
 
 interface GameContextType {
   coins: number;
@@ -9,6 +9,7 @@ interface GameContextType {
   activeEgg: Egg | null;
   activePet: Pet | null;
   inventory: InventoryItem[];
+  quests: Quest[];
   addTask: (title: string, type: 'habit' | 'todo', difficulty: Difficulty) => void;
   completeTodo: (id: string) => void;
   trackHabit: (id: string) => void;
@@ -18,6 +19,7 @@ interface GameContextType {
   interactWithPet: (action: 'feed' | 'play') => void;
   buyShopItem: (item: ShopItem) => boolean;
   consumeItem: (itemId: string, statBoost: { hunger: number; happiness: number }) => void;
+  claimQuestReward: (questId: string) => void;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -28,6 +30,29 @@ const REWARDS: Record<Difficulty, { coins: number; xp: number }> = {
   medium: { coins: 20, xp: 50 },
   hard: { coins: 40, xp: 100 },
 };
+
+const INITIAL_QUESTS: Quest[] = [
+  {
+    id: 'q1',
+    title: 'Novice Hatchling',
+    description: 'Complete 3 tasks or habits.',
+    targetType: 'tasks_completed',
+    targetValue: 3,
+    currentValue: 0,
+    gemReward: 2,
+    isClaimed: false,
+  },
+  {
+    id: 'q2',
+    title: 'Golden Hoarder',
+    description: 'Accumulate a baseline total of 250 coins.',
+    targetType: 'coins_earned',
+    targetValue: 250,
+    currentValue: 0,
+    gemReward: 5,
+    isClaimed: false,
+  },
+];
 
 const PET_TEMPLATES: Record<EggType, { emoji: string; type: string }> = {
   Nature: { emoji: '🐰', type: 'Bunny' },
@@ -45,6 +70,26 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [activePet, setActivePet] = useState<Pet | null>(null);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [quests, setQuests] = useState<Quest[]>(INITIAL_QUESTS);
+  const [totalCoinsEarned, setTotalCoinsEarned] = useState<number>(0);
+
+  const updateQuestProgress = (type: 'tasks_completed' | 'coins_earned', amount: number) => {
+    setQuests((prevQuests) =>
+      prevQuests.map((quest) => {
+        if (quest.targetType !== type || quest.isClaimed) return quest;
+
+        const nextValue =
+          type === 'tasks_completed'
+            ? quest.currentValue + amount
+            : quest.currentValue + amount;
+
+        return {
+          ...quest,
+          currentValue: Math.min(nextValue, quest.targetValue),
+        };
+      })
+    );
+  };
 
   const addTask = (title: string, type: 'habit' | 'todo', difficulty: Difficulty) => {
     const newTask: Task = {
@@ -64,10 +109,14 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!todo || todo.isCompleted) return;
 
     const { coins: cReward, xp: xReward } = REWARDS[todo.difficulty];
-    setCoins((prev) => prev + cReward);
+    const newCoins = coins + cReward;
+    setCoins(newCoins);
+    setTotalCoinsEarned((prev) => prev + cReward);
     setXp((prev) => prev + xReward);
     handleEggProgress(xReward);
     setTasks((prev) => prev.map((t) => t.id === id ? { ...t, isCompleted: true } : t));
+    updateQuestProgress('tasks_completed', 1);
+    updateQuestProgress('coins_earned', cReward);
   };
 
   const trackHabit = (id: string) => {
@@ -75,12 +124,17 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!habit) return;
 
     const { coins: cReward, xp: xReward } = REWARDS[habit.difficulty];
-    setCoins((prev) => prev + cReward);
+    const newCoins = coins + cReward;
+
+    setCoins(newCoins);
+    setTotalCoinsEarned((prev) => prev + cReward);
     setXp((prev) => prev + xReward);
     handleEggProgress(xReward);
     setTasks((prev) =>
       prev.map((t) => t.id === id ? { ...t, streak: (t.streak || 0) + 1 } : t)
     );
+    updateQuestProgress('tasks_completed', 1);
+    updateQuestProgress('coins_earned', cReward);
   };
 
   const handleEggProgress = (gainedXp: number) => {
@@ -162,6 +216,18 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   };
 
+  const claimQuestReward = (questId: string) => {
+    const quest = quests.find((questItem) => questItem.id === questId);
+    if (!quest || quest.currentValue < quest.targetValue || quest.isClaimed) return;
+
+    setGems((prev) => prev + quest.gemReward);
+    setQuests((prev) =>
+      prev.map((questItem) =>
+        questItem.id === questId ? { ...questItem, isClaimed: true } : questItem
+      )
+    );
+  };
+
   const hatchPet = (name: string) => {
     if (!activeEgg || !activeEgg.isHatched) return;
     const template = PET_TEMPLATES[activeEgg.type];
@@ -214,7 +280,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <GameContext.Provider value={{ coins, gems, xp, tasks, activeEgg, activePet, inventory, addTask, completeTodo, trackHabit, deleteTask, purchaseEgg, hatchPet, interactWithPet, buyShopItem, consumeItem }}>
+    <GameContext.Provider value={{ coins, gems, xp, tasks, activeEgg, activePet, inventory, quests, addTask, completeTodo, trackHabit, deleteTask, purchaseEgg, hatchPet, interactWithPet, buyShopItem, consumeItem, claimQuestReward }}>
       {children}
     </GameContext.Provider>
   );
