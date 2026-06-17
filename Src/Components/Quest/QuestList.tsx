@@ -57,7 +57,11 @@ export const QuestList: React.FC = () => {
             <div
               key={quest.id}
               className={`p-4 rounded-2xl border transition-all ${
-                quest.isClaimed ? 'bg-gray-50/50 border-gray-100 opacity-60' : 'bg-white border-orange-50/60 shadow-sm'
+                quest.isClaimed
+                  ? 'bg-gray-50/50 border-gray-100 opacity-60'
+                  : isReady
+                  ? 'bg-hh-accent/10 border-hh-accent shadow-[0_0_0_1px_rgba(255,111,166,0.3)] animate-pulse'
+                  : 'bg-white border-orange-50/60 shadow-sm'
               }`}
             >
               <div className="flex justify-between items-start mb-2 gap-3">
