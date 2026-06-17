@@ -49,6 +49,9 @@ export const QuestList: React.FC = () => {
         {quests.map((quest) => {
           const progressPercentage = Math.min((quest.currentValue / quest.targetValue) * 100, 100);
           const isReady = quest.currentValue >= quest.targetValue;
+          const iconClasses = `text-base transition-transform duration-300 ${
+            isReady && !quest.isClaimed ? 'animate-bounce scale-110' : ''
+          }`;
 
           return (
             <div
@@ -59,7 +62,7 @@ export const QuestList: React.FC = () => {
             >
               <div className="flex justify-between items-start mb-2 gap-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-base">{getQuestIcon(quest.targetType)}</span>
+                  <span className={iconClasses}>{getQuestIcon(quest.targetType)}</span>
                   <div>
                     <h4 className={`text-xs font-bold ${quest.isClaimed ? 'line-through text-gray-400' : 'text-hh-text'}`}>
                       {quest.title}
