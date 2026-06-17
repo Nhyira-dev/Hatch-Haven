@@ -1,0 +1,18 @@
+export type Difficulty = 'trivial' | 'easy' | 'medium' | 'hard';
+
+export interface Task {
+  id: string;
+  title: string;
+  type: 'habit' | 'todo';
+  difficulty: Difficulty;
+  isCompleted: boolean;
+  streak?: number;
+  createdAt: Date;
+}
+
+export interface GameState {
+  coins: number;
+  gems: number;
+  xp: number;
+  tasks: Task[];
+}
