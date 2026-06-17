@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-hh-bg text-hh-text font-sans antialiased selection:bg-hh-accent/30;
+  }
+
+  /* Global Soft Rounded Style for Cozy Theme */
+  .cozy-card {
+    @apply bg-white rounded-3xl border border-orange-50/50 shadow-cozy transition-all duration-300 hover:shadow-floating;
+  }
+}

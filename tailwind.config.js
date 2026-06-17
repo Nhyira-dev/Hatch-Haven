@@ -1,9 +1,9 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   content: [
     "./index.html",
     "./Src/**/*.{js,ts,jsx,tsx}",
-    "./Public/**/*.{html}"
+    "./Public/**/*.html"
   ],
   theme: {
     extend: {
@@ -26,7 +26,7 @@ export default {
         'cozy': '0 8px 30px rgb(0, 0, 0, 0.04)',
         'floating': '0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
       }
-    },
+    }
   },
   plugins: [],
 }
