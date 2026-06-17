@@ -56,6 +56,13 @@ export interface Quest {
   isClaimed: boolean;
 }
 
+export interface Message {
+  id: string;
+  sender: 'player' | 'pet';
+  text: string;
+  timestamp: Date;
+}
+
 export type EggType = 'Nature' | 'Dragon' | 'Ocean' | 'Galaxy' | 'Forest';
 
 export interface Egg {

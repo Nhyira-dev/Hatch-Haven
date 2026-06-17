@@ -8,10 +8,11 @@ import { PetDisplay } from '../../Components/Pet/PetDisplay';
 import { ShopCatalog } from '../../Components/Shop/ShopCatalog';
 import { InventoryBag } from '../../Components/Inventory/InventoryBag';
 import { QuestList } from '../../Components/Quest/QuestList';
+import { PetChat } from '../../Components/Chat/PetChat';
 
 export const HomePage: React.FC = () => {
   const { tasks, activeEgg, activePet } = useGame();
-  const [activeTab, setActiveTab] = useState<'haven' | 'shop' | 'inventory' | 'quests'>('haven');
+  const [activeTab, setActiveTab] = useState<'haven' | 'shop' | 'inventory' | 'quests' | 'chat'>('haven');
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
@@ -50,6 +51,14 @@ export const HomePage: React.FC = () => {
           >
             🏆 Quests
           </button>
+          <button
+            onClick={() => setActiveTab('chat')}
+            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+              activeTab === 'chat' ? 'bg-hh-primary text-white shadow-sm' : 'text-hh-text hover:bg-gray-50'
+            }`}
+          >
+            💬 Chat
+          </button>
         </div>
 
         <div className="cozy-card p-5 flex flex-col items-center justify-center min-h-[380px] lg:min-h-[400px] bg-gradient-to-b from-white to-orange-50/20 w-full">
@@ -59,6 +68,8 @@ export const HomePage: React.FC = () => {
             <InventoryBag />
           ) : activeTab === 'quests' ? (
             <QuestList />
+          ) : activeTab === 'chat' ? (
+            <PetChat />
           ) : activePet ? (
             <PetDisplay />
           ) : activeEgg ? (
