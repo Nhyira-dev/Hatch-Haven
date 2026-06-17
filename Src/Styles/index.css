@@ -47,4 +47,19 @@
   .custom-scrollbar::-webkit-scrollbar-thumb {
     @apply bg-gray-200 rounded-full hover:bg-gray-300;
   }
+
+  .shimmer-quest {
+    background-image: linear-gradient(135deg, rgba(255,255,255,0.08) 25%, rgba(255,255,255,0.35) 50%, rgba(255,255,255,0.08) 75%);
+    background-size: 200% 200%;
+    animation: shimmer-quest 2.2s ease-in-out infinite;
+  }
+
+  @keyframes shimmer-quest {
+    0% {
+      background-position: -150% 0;
+    }
+    100% {
+      background-position: 150% 0;
+    }
+  }
 }

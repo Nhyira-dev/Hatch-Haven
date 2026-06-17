@@ -56,9 +56,9 @@ export const QuestList: React.FC = () => {
           return (
             <div
               key={quest.id}
-              className={`p-4 rounded-2xl border transition-all ${
+              className={`relative p-4 rounded-2xl border transition-all ${
                 quest.isClaimed
-                  ? 'bg-gray-50/50 border-gray-100 opacity-60'
+                  ? 'bg-gray-50/50 border-gray-100 opacity-60 shimmer-quest'
                   : isReady
                   ? 'bg-hh-accent/10 border-hh-accent shadow-[0_0_0_1px_rgba(255,111,166,0.3)] animate-pulse'
                   : 'bg-white border-orange-50/60 shadow-sm'
@@ -102,8 +102,9 @@ export const QuestList: React.FC = () => {
               )}
 
               {quest.isClaimed && (
-                <div className="text-center text-[10px] text-gray-400 font-semibold mt-2">
-                  ✓ Completed & Claimed
+                <div className="text-center text-[10px] text-gray-400 font-semibold mt-2 flex items-center justify-center gap-1">
+                  <span className="text-sm">✨</span>
+                  <span>Completed & Claimed</span>
                 </div>
               )}
             </div>
